@@ -1,0 +1,4 @@
+const VEHICLE_STORAGE_KEY = 'VEHICLES';
+
+
+export default VEHICLE_STORAGE_KEY
