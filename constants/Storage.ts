@@ -1,4 +1,2 @@
-const VEHICLE_STORAGE_KEY = 'VEHICLES';
-
-
-export default VEHICLE_STORAGE_KEY
+export const VEHICLE_STORAGE_KEY = 'VEHICLES';
+export const DEFAULT_IMAGE = require("../assets/images/default-image.jpeg") 

@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vehicle } from './types'; // Adjust the path if necessary
 import { router } from 'expo-router';
-import VEHICLE_STORAGE_KEY from '@/constants/Storage';
+import { VEHICLE_STORAGE_KEY } from '@/constants/Storage';
 
 const CreateVehicleScreen: React.FC = () => {
   const [name, setName] = useState('');

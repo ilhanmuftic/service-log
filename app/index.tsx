@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, FlatList, Button, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Vehicle } from './types'; // Adjust the path as necessary
-import styles from './styles'; // Adjust the path as necessary
-import { StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import VEHICLE_STORAGE_KEY from '@/constants/Storage';
-import { useFocusEffect } from '@react-navigation/native'; // Add this import
+import { useRouter } from 'expo-router';
+import styles from './styles';
+import { DEFAULT_IMAGE, VEHICLE_STORAGE_KEY } from '@/constants/Storage';
 
+// Define the type for vehicle
+type Vehicle = {
+  id: string;
+  name: string;
+  image: string | null;
+};
 
-// Define the props type for the VehicleCard component
-interface VehicleCardProps {
-  vehicle: Vehicle;
-}
-
-// VehicleCard component
-const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => (
-  <View style={styles.card}>
-    <Image source={vehicle.image ? { uri: vehicle.image } : require('./default-image.jpeg')} style={styles.image} />
+const VehicleCard: React.FC<{ vehicle: Vehicle; onPress: () => void }> = ({ vehicle, onPress }) => (
+  <TouchableOpacity style={styles.card} onPress={onPress}>
+    <Image source={vehicle.image ? { uri: vehicle.image } : DEFAULT_IMAGE} style={styles.image} />
     <Text style={styles.text}>{vehicle.name}</Text>
-  </View>
+  </TouchableOpacity>
 );
 
-// Index component
 const Index: React.FC = () => {
   const [vehicleData, setVehicleData] = useState<Vehicle[]>([]);
+  const router = useRouter();
 
   const loadVehicles = async () => {
     try {
@@ -36,18 +33,20 @@ const Index: React.FC = () => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      loadVehicles();
-    }, [])
-  );
+  useEffect(() => {
+    loadVehicles();
+  }, []);
+
+  const handlePress = (vehicle: Vehicle) => {
+    router.push(`/vehicle-details/${vehicle.id}`);
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
         data={vehicleData}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => <VehicleCard vehicle={item} />}
+        renderItem={({ item }) => <VehicleCard vehicle={item} onPress={() => handlePress(item)} />}
         contentContainerStyle={styles.list}
       />
       <TouchableOpacity style={localStyles.button} onPress={() => router.push('/create-vehicle')}>
@@ -55,7 +54,8 @@ const Index: React.FC = () => {
       </TouchableOpacity>
     </View>
   );
-}
+};
+
 
 const localStyles = StyleSheet.create({
   button: {
@@ -65,11 +65,11 @@ const localStyles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#007bff', // Blue color
+    backgroundColor: '#007bff',
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5, // For Android shadow
-    shadowColor: '#000', // For iOS shadow
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -77,11 +77,7 @@ const localStyles = StyleSheet.create({
   buttonText: {
     fontSize: 30,
     color: '#fff',
-  }, 
+  },
 });
 
 export default Index;
-function loadVehicles() {
-  throw new Error('Function not implemented.');
-}
-
