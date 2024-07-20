@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native'; // Add this import
 import { useRouter } from 'expo-router';
 import styles from './styles';
 import { DEFAULT_IMAGE, VEHICLE_STORAGE_KEY } from '@/constants/Storage';
@@ -33,10 +34,11 @@ const Index: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    loadVehicles();
-  }, []);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      loadVehicles();
+    }, [])
+  );
   const handlePress = (vehicle: Vehicle) => {
     router.push(`/vehicle-details/${vehicle.id}`);
   };
